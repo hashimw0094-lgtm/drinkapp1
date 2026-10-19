@@ -1,0 +1,1042 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#B85F00">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="طلبات الشركات">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<title>طلبات الشركات</title>
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Reem+Kufi:wght@600&display=swap">
+<style>
+/* Layout: one working column, groups as flat lists, fixed total bar at the bottom.
+   Palette: green-grey ink, mango accent. Type: Reem Kufi title, IBM Plex Sans Arabic body. */
+:root{
+  --bg:#EEF2F0; --surface:#FFFFFF; --surface2:#E3EAE7; --fg:#12211D; --muted:#5A6B66;
+  --line:#D2DCD8; --accent:#B85F00; --accent-fg:#FFFFFF; --accent-soft:#FBE8D0; --danger:#B3261E;
+  --font-display:"Reem Kufi","IBM Plex Sans Arabic",system-ui,sans-serif;
+  --font-body:"IBM Plex Sans Arabic","Segoe UI",Tahoma,system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1A17; --surface:#172420; --surface2:#1F2F2A; --fg:#E6EFEB; --muted:#93A59E;
+    --line:#2B3D37; --accent:#F0A04B; --accent-fg:#1A1005; --accent-soft:#3A2A12; --danger:#F2A29B;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1A17; --surface:#172420; --surface2:#1F2F2A; --fg:#E6EFEB; --muted:#93A59E;
+  --line:#2B3D37; --accent:#F0A04B; --accent-fg:#1A1005; --accent-soft:#3A2A12; --danger:#F2A29B;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{
+  background:var(--bg); color:var(--fg); font-family:var(--font-body); font-size:15px; line-height:1.6;
+  padding-block:16px 140px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1{font-family:var(--font-display);font-size:26px;line-height:1.3;margin:0;font-weight:600;text-wrap:balance}
+h2{font-size:16px;margin:0;font-weight:600}
+.sub{color:var(--muted);font-size:13px;margin:2px 0 0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fields .full{grid-column:1/-1}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted);min-width:0}
+input[type=text],input[type=date],input[type=number],textarea{
+  font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:8px;
+  padding:9px 10px;min-width:0;width:100%;font-size:15px;
+}
+textarea{resize:vertical;min-height:60px}
+input:focus-visible,textarea:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{
+  text-align:center;padding:9px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);
+  color:var(--fg);cursor:pointer;font-size:14px;
+}
+.seg input:checked + label{background:var(--accent);border-color:var(--accent);color:var(--accent-fg);font-weight:600}
+.seg input:focus-visible + label{outline:2px solid var(--accent);outline-offset:2px}
+.hint{font-size:12px;color:var(--muted);margin-top:6px}
+.feehead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.feehead b{color:var(--fg);font-weight:600;font-size:14px}
+.presets{display:flex;gap:6px}
+button.btn.mini{padding:5px 10px;font-size:12px}
+.feegrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px}
+.feegrid label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--muted);min-width:0}
+.feegrid input{text-align:center;padding:8px 4px;font-variant-numeric:tabular-nums}
+@media (max-width:420px){.feegrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.group{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.ghead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:11px 14px;background:var(--surface2)}
+.gmeta{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.gmeta.on{color:var(--accent);font-weight:600}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:10px;padding:9px 14px;border-top:1px solid var(--line)}
+.nm{display:flex;flex-direction:column;min-width:0}
+.nm .t{font-weight:500;overflow-wrap:anywhere}
+.nm .c{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.amt{font-size:13px;color:var(--accent);font-weight:600;min-width:62px;text-align:end;font-variant-numeric:tabular-nums}
+.qty{display:flex;align-items:center;gap:4px}
+.qty button{
+  width:38px;height:38px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);
+  font:inherit;font-size:20px;line-height:1;cursor:pointer;padding:0;
+}
+.qty button:active{background:var(--surface2)}
+.qty input{width:62px;text-align:center;padding:8px 4px;font-variant-numeric:tabular-nums;-moz-appearance:textfield}
+.qty input::-webkit-outer-spin-button,.qty input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.row.has .qty input{background:var(--accent-soft);border-color:var(--accent);font-weight:600}
+
+details.panel summary{cursor:pointer;font-weight:600;font-size:16px}
+.scroll{overflow-x:auto;margin-top:10px}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{padding:7px 8px;text-align:start;border-bottom:1px solid var(--line);white-space:nowrap}
+th{color:var(--muted);font-weight:500}
+td input{width:84px;padding:6px 6px;font-size:14px;text-align:center}
+td.n{text-align:end}
+tfoot td{font-weight:700;border-bottom:0}
+.pos{color:var(--accent);font-weight:600}
+
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+button.btn{
+  font:inherit;font-size:14px;padding:9px 14px;border-radius:8px;border:1px solid var(--line);
+  background:var(--bg);color:var(--fg);cursor:pointer;
+}
+button.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-fg);font-weight:600}
+button.btn.danger{color:var(--danger);border-color:var(--danger)}
+button.btn[disabled]{opacity:.55;cursor:default}
+#sumtxt{margin-top:10px;min-height:150px;direction:rtl}
+
+.orders{display:flex;flex-direction:column}
+.ord{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 10px;align-items:center;padding:11px 0;border-top:1px solid var(--line)}
+.ord:first-child{border-top:0}
+.ord .t{font-weight:600}
+.ord .m{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.ord.cur .t::after{content:" · قيد التعديل";color:var(--accent);font-weight:500;font-size:12px}
+.ord .acts{display:flex;gap:6px}
+.ord .acts .btn{padding:6px 11px;font-size:13px}
+.empty{color:var(--muted);font-size:14px;padding:6px 0}
+.last{margin-top:12px;padding:10px 12px;border-radius:8px;background:var(--bg);border:1px solid var(--line);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.last b{color:var(--fg);font-weight:600}
+.modal{
+  position:fixed;inset:0;z-index:40;display:flex;align-items:flex-end;justify-content:center;
+  background:color-mix(in srgb,var(--fg) 45%,transparent);
+}
+.msheet{
+  width:100%;max-width:580px;max-height:90vh;overflow-y:auto;background:var(--surface);color:var(--fg);
+  border:1px solid var(--line);border-radius:14px 14px 0 0;
+  padding-top:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom, 0px));
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+.msheet h2{font-size:18px}
+.preview{margin-top:12px}
+.preview .phead{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.preview img{display:block;width:100%;height:auto;margin-top:8px;border:1px solid var(--line);border-radius:6px;background:#fff}
+.warn{margin-top:10px;padding:9px 12px;border-radius:8px;border:1px solid var(--danger);color:var(--danger);font-size:13px}
+.warn div+div{margin-top:3px}
+@media (min-width:600px){.modal{align-items:center}.msheet{border-radius:14px}}
+
+.bar{
+  position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);
+  padding-top:10px;
+  padding-bottom:calc(10px + env(safe-area-inset-bottom, 0px));
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+.bar .in{max-width:760px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.bar .k{font-size:12px;color:var(--muted)}
+.bar .v{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.2}
+.bar .st{font-size:12px;color:var(--muted);min-height:18px}
+.bar .st.err{color:var(--danger)}
+@media (max-width:420px){
+  .fields{grid-template-columns:1fr}
+  h1{font-size:23px}
+}
+@media (prefers-reduced-motion: no-preference){
+  .qty button,.btn{transition:background .12s}
+}
+</style>
+</head>
+<body>
+
+
+<div dir="rtl" lang="ar" class="wrap" id="app">
+  <header>
+    <h1>تسجيل طلبات الشركات</h1>
+    <p class="sub">أدخل الكراتين لكل صنف وسيحسب المبلغ والنقل والإيجار تلقائياً.</p>
+  </header>
+
+  <section class="panel" aria-label="بيانات الطلب">
+    <div class="fields">
+      <label class="f" for="date">التاريخ<input id="date" type="date"></label>
+      <label class="f" for="supplier">الشركة / المورد<input id="supplier" type="text" list="sups" autocomplete="off" placeholder="مثال: الراني"></label>
+      <datalist id="sups"><option value="الراني"><option value="ديلسي"><option value="موسى"><option value="ديكو"></datalist>
+      <div class="f full">
+        <div class="feehead">
+          <b>الأجور (أجرة نقل الكرتون)</b>
+          <span class="presets">
+            <button type="button" class="btn mini" data-preset="1">إيجار يريم</button>
+            <button type="button" class="btn mini" data-preset="2">دمت</button>
+          </span>
+        </div>
+        <div class="feegrid" id="fees"></div>
+        <div class="hint">اكتب أجرة الكرتون لكل مجموعة، أو اضغط إيجار يريم أو دمت لتعبئتها دفعة واحدة.</div>
+      </div>
+      <label class="f full" for="note">ملاحظات<textarea id="note" placeholder="اختياري"></textarea></label>
+    </div>
+  </section>
+
+  <div id="groups" class="wrap" style="gap:12px"></div>
+
+  <section class="panel" aria-label="ملخص الطلب">
+    <h2>ملخص الطلب</h2>
+    <div class="scroll"><table>
+      <thead><tr><th>المجموعة</th><th class="n">كراتين</th><th class="n">المبلغ</th><th class="n">أجرة الكرتون</th><th class="n">النقل</th><th class="n">الإيجار</th></tr></thead>
+      <tbody id="sumrows"></tbody>
+      <tfoot id="sumfoot"></tfoot>
+    </table></div>
+    <div class="btns">
+      <button type="button" class="btn primary" id="sharepdf">مشاركة PDF</button>
+      <button type="button" class="btn primary" id="shareimg">مشاركة صورة</button>
+      <button type="button" class="btn primary" id="sharecompany">مشاركة للشركة (الأصناف والكميات)</button>
+      <button type="button" class="btn" id="copy">نسخ الطلب للإرسال</button>
+      <button type="button" class="btn" id="clear">طلب جديد</button>
+    </div>
+    <div class="last" id="lastnote"></div>
+    <div class="preview" id="preview" hidden></div>
+    <textarea id="sumtxt" readonly hidden aria-label="نص الطلب"></textarea>
+  </section>
+
+  <section class="panel" aria-label="الطلبات المحفوظة">
+    <h2>الطلبات المحفوظة</h2>
+    <div class="orders" id="orders"><div class="empty">لا توجد طلبات محفوظة بعد.</div></div>
+  </section>
+
+  <details class="panel" id="settings">
+    <summary>الأسعار والأجور</summary>
+    <p class="sub">سعر الشركة والإيجار لكل كرتون، وأجور يريم ودمت التي تُعبّئ خانات الأجور في الطلب عند الضغط على زر كل منهما.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>الصنف</th><th>سعر الشركة</th><th>نقل إيجار يريم</th><th>نقل دمت</th><th>إيجار</th></tr></thead>
+      <tbody id="cfgrows"></tbody>
+    </table></div>
+    <h2 style="margin-top:18px">مقارنة بسعر الجنوب</h2>
+    <label class="f" for="rate" style="margin-top:8px;max-width:200px">سعر الصرف (درهم)<input id="rate" type="number" inputmode="decimal" min="0" step="any"></label>
+    <div class="scroll"><table>
+      <thead><tr><th>الصنف</th><th class="n">بالدرهم</th><th class="n">الجنوب</th><th class="n">الشركة</th><th class="n">الفرق</th></tr></thead>
+      <tbody id="south"></tbody>
+    </table></div>
+    <div class="hint">الفرق = سعر الجنوب − سعر الشركة. الموجب يعني أن سعر الشركة أقل.</div>
+    <h2 style="margin-top:18px">نسخة احتياطية</h2>
+    <p class="sub">الطلبات محفوظة على هذا الجوال فقط. صدّر نسخة بين فترة وأخرى، واستوردها عند تغيير الجوال.</p>
+    <div class="btns">
+      <button type="button" class="btn" id="bkexport">تصدير نسخة احتياطية</button>
+      <button type="button" class="btn" id="bkimportbtn">استيراد نسخة</button>
+      <input type="file" id="bkimport" accept="application/json,.json" hidden>
+    </div>
+  </details>
+</div>
+
+<div class="bar" id="bar">
+  <div class="in">
+    <div>
+      <div class="k"><span id="bcount">0</span> كرتون · الإجمالي مع النقل والإيجار</div>
+      <div class="v" id="btotal">0</div>
+      <div class="st" id="status" role="status" aria-live="polite"></div>
+    </div>
+    <button type="button" class="btn primary" id="save">حفظ الطلب</button>
+  </div>
+</div>
+
+<div class="modal" id="confirm" dir="rtl" lang="ar" hidden>
+  <div class="msheet" role="dialog" aria-modal="true" aria-labelledby="ctitle">
+    <h2 id="ctitle">راجع قبل الحفظ</h2>
+    <p class="sub" id="cmode"></p>
+    <div id="cwarn"></div>
+    <div class="scroll"><table>
+      <thead><tr><th>الصنف</th><th class="n">كراتين</th><th class="n">سعر الكرتون</th><th class="n">أجرة النقل</th><th class="n">الإيجار</th></tr></thead>
+      <tbody id="crows"></tbody>
+      <tfoot id="cfoot"></tfoot>
+    </table></div>
+    <div class="btns">
+      <button type="button" class="btn primary" id="cok">تأكيد وحفظ</button>
+      <button type="button" class="btn" id="cno">رجوع للتعديل</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var GROUPS=[
+    {k:'rani',t:'الراني'},{k:'big',t:'ديلسي كبير'},{k:'small',t:'ديلسي صغير'},
+    {k:'mosa',t:'موسى'},{k:'glass',t:'زجاج'},{k:'dec',t:'ديكو'},{k:'water',t:'مياه السعيدة'}
+  ];
+  var PKS=[
+    {k:'rani',n:'راني علب 250مل',price:7700,t1:104,t2:115},
+    {k:'dec',n:'ديكو مانجو عريض 265مل',price:5700,t1:104,t2:115},
+    {k:'big',n:'ديلسي كبير 500مل',price:4450,t1:149,t2:168},
+    {k:'small',n:'ديلسي صغير 330مل',price:3300,t1:106,t2:122},
+    {k:'mosaB',n:'موسى شعير وتفاح',price:12300,t1:144,t2:162},
+    {k:'mosaO',n:'موسى فراولة وتوت',price:10500,t1:144,t2:162},
+    {k:'glass',n:'راني مانجو زجاج 200مل',price:4000,t1:104,t2:115},
+    {k:'water',n:'مياه السعيدة 750مل',price:1000,t1:0,t2:0}
+  ];
+  var SOUTH=[{pk:'rani',aed:51.1},{pk:'dec',aed:38.1},{pk:'small',aed:23.3},{pk:'big',aed:31.3}];
+  var RAW=[
+    ['016-0001','راني مانجو','rani','rani'],['016-0003','راني حبيبات البرتقال','rani','rani'],
+    ['016-0004','راني مشكل','rani','rani'],['016-0005','راني جوافة','rani','rani'],
+    ['016-0005','راني حبيبات الأناناس','rani','rani'],['016-0009','راني حبيبات الخوخ','rani','rani'],
+    ['016-0011','راني كوكتيل','rani','rani'],
+    ['016-0201','ديلسي كولا كبير 500مل','big','big'],['016-0202','ديلسي رمان كبير 500مل','big','big'],
+    ['016-0304','ديلسي زنجبيل كبير 500مل','big','big'],['016-0208','راني تفاح 500مل','big','big'],
+    ['016-0205','ديلسي رمان صغير 330مل','small','small'],['016-0206','ديلسي كولا صغير 330مل','small','small'],
+    ['016-0303','ديلسي زنجبيل 330 مل','small','small'],['016-0207','ديلسي برتقال 330مل بلاستيك','small','small'],
+    ['016-0204','ديلسي تفاح صغير 330مل','small','small'],
+    ['016-0501','موسى شعير','mosa','mosaB'],['016-0502','موسى تفاح','mosa','mosaB'],['016-0505','موسى فراولة','mosa','mosaO'],
+    ['','موسى توت','mosa','mosaO'],
+    ['016-0002','راني مانجو زجاج 24×200مل','glass','glass'],
+    ['','مياه السعيدة 750مل','water','water'],
+    ['016-0101','ديكو مانجو عريض 24×265مل','dec','dec']
+  ];
+  var ITEMS=RAW.map(function(r,i){return {id:'i'+i,code:r[0],name:r[1],g:r[2],pk:r[3]}});
+  var PKNAME={};PKS.forEach(function(p){PKNAME[p.k]=p.n});
+
+  function defaults(){
+    var c={price:{},t1:{},t2:{},rent:{},rate:140};
+    PKS.forEach(function(p){c.price[p.k]=p.price;c.t1[p.k]=p.t1;c.t2[p.k]=p.t2;c.rent[p.k]=0});
+    return c;
+  }
+  var cfg=defaults();
+  function mergeCfg(src){
+    if(!src||typeof src!=='object')return;
+    ['price','t1','t2','rent'].forEach(function(f){
+      if(src[f])PKS.forEach(function(p){var v=Number(src[f][p.k]);if(isFinite(v)&&v>=0)cfg[f][p.k]=v});
+    });
+    var r=Number(src.rate);if(isFinite(r)&&r>0)cfg.rate=r;
+  }
+
+  var $=function(s){return document.querySelector(s)};
+  function fmt(n){return (Math.round(n*100)/100).toLocaleString('en-US',{maximumFractionDigits:2})}
+  function todayStr(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+  function showDate(s){var p=(s||'').split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:(s||'')}
+
+  function presetFees(n){
+    var c=cfg['t'+(n===2?2:1)];
+    return {rani:c.rani,big:c.big,small:c.small,mosa:c.mosaB,glass:c.glass,dec:c.dec,water:c.water};
+  }
+  function feesFrom(o){
+    var f=presetFees(o&&o.tier===2?2:1);
+    if(o&&o.fees&&typeof o.fees==='object'){
+      Object.keys(f).forEach(function(k){var v=Number(o.fees[k]);if(isFinite(v)&&v>=0)f[k]=v});
+    }
+    return f;
+  }
+
+  var st={id:null,no:null,createdAt:null,date:todayStr(),supplier:'',note:'',fees:presetFees(1),fv:2,qty:{}};
+  var orders=[];
+  var db=null,downloads=null;
+
+  // ---------- build groups ----------
+  var gEl=$('#groups');
+  GROUPS.forEach(function(g){
+    var sec=document.createElement('section');sec.className='group';
+    var html='<div class="ghead"><h2>'+g.t+'</h2><span class="gmeta" id="gm-'+g.k+'">0 كرتون</span></div>';
+    ITEMS.filter(function(i){return i.g===g.k}).forEach(function(i){
+      html+='<div class="row" id="r-'+i.id+'"><div class="nm"><span class="t">'+i.name+'</span><span class="c">'+(i.code?i.code+' · ':'')+'<span id="p-'+i.id+'"></span></span></div>'+
+        '<span class="amt" id="a-'+i.id+'"></span>'+
+        '<div class="qty"><button type="button" data-id="'+i.id+'" data-d="-1" aria-label="إنقاص '+i.name+'">−</button>'+
+        '<input type="number" inputmode="numeric" min="0" step="1" id="q-'+i.id+'" data-id="'+i.id+'" aria-label="كمية '+i.name+'" placeholder="0">'+
+        '<button type="button" data-id="'+i.id+'" data-d="1" aria-label="زيادة '+i.name+'">+</button></div></div>';
+    });
+    sec.innerHTML=html;gEl.appendChild(sec);
+  });
+
+  // ---------- settings table ----------
+  var cfgRows=$('#cfgrows');
+  PKS.forEach(function(p){
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td>'+p.n+'</td>'+['price','t1','t2','rent'].map(function(f){
+      return '<td><input type="number" inputmode="decimal" min="0" step="any" data-f="'+f+'" data-pk="'+p.k+'" aria-label="'+p.n+'"></td>';
+    }).join('');
+    cfgRows.appendChild(tr);
+  });
+  function syncCfgInputs(){
+    document.querySelectorAll('#cfgrows input').forEach(function(inp){
+      if(inp===document.activeElement)return;
+      inp.value=cfg[inp.dataset.f][inp.dataset.pk];
+    });
+    if($('#rate')!==document.activeElement)$('#rate').value=cfg.rate;
+  }
+
+  // ---------- calculation ----------
+  function calc(){
+    var t={cartons:0,goods:0,transport:0,rent:0,total:0,groups:{},lines:{}};
+    GROUPS.forEach(function(g){t.groups[g.k]={c:0,goods:0,tr:0,rn:0}});
+    ITEMS.forEach(function(it){
+      var q=st.qty[it.id]||0;if(!q)return;
+      var goods=q*cfg.price[it.pk],tr=q*(st.fees[it.g]||0),rn=q*cfg.rent[it.pk];
+      var g=t.groups[it.g];g.c+=q;g.goods+=goods;g.tr+=tr;g.rn+=rn;
+      t.cartons+=q;t.goods+=goods;t.transport+=tr;t.rent+=rn;
+      t.lines[it.id]=goods;
+    });
+    t.total=t.goods+t.transport+t.rent;
+    return t;
+  }
+
+  function update(){
+    var t=calc();
+    ITEMS.forEach(function(it){
+      var q=st.qty[it.id]||0;
+      $('#r-'+it.id).classList.toggle('has',q>0);
+      $('#a-'+it.id).textContent=q>0?fmt(t.lines[it.id]):'';
+      $('#p-'+it.id).textContent=fmt(cfg.price[it.pk]);
+    });
+    GROUPS.forEach(function(g){
+      var d=t.groups[g.k],el=$('#gm-'+g.k);
+      el.textContent=d.c>0?d.c+' كرتون · '+fmt(d.goods):'0 كرتون';
+      el.classList.toggle('on',d.c>0);
+    });
+    var rows='';
+    GROUPS.forEach(function(g){
+      var d=t.groups[g.k];if(!d.c)return;
+      rows+='<tr><td>'+g.t+'</td><td class="n">'+d.c+'</td><td class="n">'+fmt(d.goods)+'</td><td class="n">'+fmt(st.fees[g.k]||0)+'</td><td class="n">'+fmt(d.tr)+'</td><td class="n">'+fmt(d.rn)+'</td></tr>';
+    });
+    $('#sumrows').innerHTML=rows||'<tr><td colspan="6" style="color:var(--muted)">لم تُدخل أي كمية بعد.</td></tr>';
+    $('#sumfoot').innerHTML='<tr><td>الإجمالي</td><td class="n">'+t.cartons+'</td><td class="n">'+fmt(t.goods)+'</td><td></td><td class="n">'+fmt(t.transport)+'</td><td class="n">'+fmt(t.rent)+'</td></tr>'+
+      '<tr><td colspan="5">المجموع الكلي</td><td class="n pos">'+fmt(t.total)+'</td></tr>';
+    $('#bcount').textContent=t.cartons;
+    $('#btotal').textContent=fmt(t.total);
+    south();
+    return t;
+  }
+
+  function south(){
+    $('#south').innerHTML=SOUTH.map(function(s){
+      var loc=s.aed*cfg.rate,diff=loc-cfg.price[s.pk];
+      return '<tr><td>'+PKNAME[s.pk]+'</td><td class="n">'+fmt(s.aed)+'</td><td class="n">'+fmt(loc)+'</td><td class="n">'+fmt(cfg.price[s.pk])+'</td><td class="n '+(diff>0?'pos':'')+'">'+(diff>0?'+':'')+fmt(diff)+'</td></tr>';
+    }).join('');
+  }
+
+  // ---------- messages ----------
+  var msgTimer=null;
+  function msg(text,err){
+    var el=$('#status');el.textContent=text;el.classList.toggle('err',!!err);
+    clearTimeout(msgTimer);if(text)msgTimer=setTimeout(function(){el.textContent=''},4000);
+  }
+
+  // ---------- draft (per device convenience) ----------
+  var draftTimer=null;
+  function saveDraft(){
+    clearTimeout(draftTimer);
+    draftTimer=setTimeout(function(){
+      try{localStorage.setItem('orderDraft1',JSON.stringify(st))}catch(e){}
+    },400);
+  }
+  function loadDraft(){
+    try{
+      var d=JSON.parse(localStorage.getItem('orderDraft1')||'null');
+      if(d&&d.qty&&typeof d.qty==='object'){
+        st.id=d.id||null;st.no=d.no||null;st.createdAt=d.createdAt||null;
+        st.date=d.date||todayStr();st.supplier=d.supplier||'';st.note=d.note||'';
+        st.fees=d.fv===2?feesFrom(d):presetFees(1);st.qty=d.qty;
+      }
+    }catch(e){}
+  }
+
+  // ---------- form <-> state ----------
+  function applyState(){
+    $('#date').value=st.date;$('#supplier').value=st.supplier;$('#note').value=st.note;
+    syncFees();
+    ITEMS.forEach(function(it){var q=st.qty[it.id]||0;$('#q-'+it.id).value=q>0?q:''});
+    update();renderOrders();
+  }
+  function setQty(id,v){
+    v=Math.max(0,Math.min(99999,Math.floor(Number(v)||0)));
+    if(v>0)st.qty[id]=v;else delete st.qty[id];
+    return v;
+  }
+
+  gEl.addEventListener('click',function(e){
+    var b=e.target.closest('button[data-d]');if(!b)return;
+    var id=b.dataset.id,v=setQty(id,(st.qty[id]||0)+Number(b.dataset.d));
+    $('#q-'+id).value=v>0?v:'';update();saveDraft();
+  });
+  gEl.addEventListener('input',function(e){
+    var inp=e.target.closest('input[data-id]');if(!inp)return;
+    setQty(inp.dataset.id,inp.value);update();saveDraft();
+  });
+  gEl.addEventListener('blur',function(e){
+    var inp=e.target.closest&&e.target.closest('input[data-id]');if(!inp)return;
+    var q=st.qty[inp.dataset.id]||0;inp.value=q>0?q:'';
+  },true);
+  $('#date').addEventListener('input',function(){st.date=this.value;saveDraft()});
+  $('#supplier').addEventListener('input',function(){st.supplier=this.value;saveDraft()});
+  $('#note').addEventListener('input',function(){st.note=this.value;saveDraft()});
+  // fees (أجور) block
+  var feeEl=$('#fees');
+  GROUPS.forEach(function(g){
+    var l=document.createElement('label');
+    l.innerHTML='<span>'+g.t+'</span><input type="number" inputmode="decimal" min="0" step="any" data-g="'+g.k+'" aria-label="أجرة كرتون '+g.t+'">';
+    feeEl.appendChild(l);
+  });
+  function syncFees(){
+    feeEl.querySelectorAll('input').forEach(function(i){
+      if(i===document.activeElement)return;
+      i.value=st.fees[i.dataset.g];
+    });
+  }
+  feeEl.addEventListener('input',function(e){
+    var i=e.target.closest('input[data-g]');if(!i)return;
+    var v=Number(i.value);st.fees[i.dataset.g]=(isFinite(v)&&v>=0)?v:0;
+    update();saveDraft();
+  });
+  document.querySelectorAll('[data-preset]').forEach(function(b){
+    b.addEventListener('click',function(){
+      st.fees=presetFees(Number(this.dataset.preset));syncFees();update();saveDraft();msg(this.dataset.preset==='2'?'تم تطبيق أجور دمت':'تم تطبيق أجور إيجار يريم');
+    });
+  });
+
+  // settings edits
+  var cfgTimer=null,cfgBusy=false;
+  function scheduleCfgSave(){
+    clearTimeout(cfgTimer);
+    cfgTimer=setTimeout(async function(){
+      if(cfgBusy){scheduleCfgSave();return}
+      cfgBusy=true;
+      try{
+        if(db){await db.doc('config/main').set(JSON.parse(JSON.stringify(cfg)))}
+        else{try{localStorage.setItem('orderCfg1',JSON.stringify(cfg))}catch(e){}}
+        msg('تم حفظ الأسعار');
+      }catch(e){msg('تعذّر حفظ الأسعار',true)}
+      cfgBusy=false;
+    },700);
+  }
+  $('#cfgrows').addEventListener('input',function(e){
+    var inp=e.target.closest('input[data-f]');if(!inp)return;
+    var v=Number(inp.value);if(!isFinite(v)||v<0)return;
+    cfg[inp.dataset.f][inp.dataset.pk]=v;update();scheduleCfgSave();
+  });
+  $('#rate').addEventListener('input',function(){
+    var v=Number(this.value);if(!isFinite(v)||v<=0)return;
+    cfg.rate=v;update();scheduleCfgSave();
+  });
+
+  // ---------- orders store ----------
+  function readLocalOrders(){
+    try{return JSON.parse(localStorage.getItem('orderList1')||'[]')}catch(e){return[]}
+  }
+  function writeLocalOrders(){
+    try{localStorage.setItem('orderList1',JSON.stringify(orders))}catch(e){}
+  }
+  function newId(){return 'o'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+
+  async function saveOrder(){
+    var t=calc();
+    if(!t.cartons){msg('أدخل كمية صنف واحد على الأقل',true);return}
+    var btn=$('#save');btn.disabled=true;
+    try{
+      var maxNo=orders.reduce(function(m,o){return Math.max(m,o.no||0)},0);
+      var id=st.id||newId(),no=st.no||(maxNo+1),now=Date.now();
+      var qty={};Object.keys(st.qty).forEach(function(k){if(st.qty[k]>0)qty[k]=st.qty[k]});
+      var doc={
+        no:no,date:st.date,supplier:st.supplier.trim(),note:st.note.trim(),fees:Object.assign({},st.fees),qty:qty,
+        totals:{cartons:t.cartons,goods:t.goods,transport:t.transport,rent:t.rent,total:t.total},
+        cfg:JSON.parse(JSON.stringify(cfg)),createdAt:st.createdAt||now,updatedAt:now
+      };
+      if(db){await db.collection('orders').doc(id).set(doc)}
+      else{
+        var rec=Object.assign({id:id},doc);
+        var ix=orders.findIndex(function(o){return o.id===id});
+        if(ix>=0)orders[ix]=rec;else orders.unshift(rec);
+        orders.sort(function(a,b){return b.createdAt-a.createdAt});
+        writeLocalOrders();
+      }
+      st.id=id;st.no=no;st.createdAt=doc.createdAt;saveDraft();
+      renderOrders();msg('تم حفظ الطلب رقم '+no);
+    }catch(e){
+      msg(e&&e.code==='invalid_argument'?'ليس لديك صلاحية الحفظ':'تعذّر حفظ الطلب، حاول مرة أخرى',true);
+    }
+    btn.disabled=false;
+  }
+
+  function renderOrders(){
+    renderLast();
+    var box=$('#orders');
+    if(!orders.length){box.innerHTML='<div class="empty">لا توجد طلبات محفوظة بعد.</div>';return}
+    box.innerHTML='';
+    orders.forEach(function(o){
+      var d=document.createElement('div');d.className='ord'+(o.id===st.id?' cur':'');
+      var tt=o.totals||{};
+      d.innerHTML='<div><div class="t"></div><div class="m"></div></div><div class="acts"><button type="button" class="btn" data-a="edit">تعديل</button><button type="button" class="btn danger" data-a="del">حذف</button></div>';
+      d.querySelector('.t').textContent='طلب '+(o.no||'')+(o.supplier?' · '+o.supplier:'');
+      d.querySelector('.m').textContent=showDate(o.date)+' · '+(tt.cartons||0)+' كرتون · '+fmt(tt.total||0);
+      d.dataset.id=o.id;box.appendChild(d);
+    });
+  }
+
+  var delArm=null,delTimer=null;
+  $('#orders').addEventListener('click',async function(e){
+    var b=e.target.closest('button[data-a]');if(!b)return;
+    var row=b.closest('.ord'),id=row.dataset.id;
+    var o=orders.find(function(x){return x.id===id});if(!o)return;
+    if(b.dataset.a==='edit'){
+      st.id=o.id;st.no=o.no||null;st.createdAt=o.createdAt||null;st.date=o.date||todayStr();
+      st.supplier=o.supplier||'';st.note=o.note||'';st.fees=feesFrom(o);st.qty=Object.assign({},o.qty||{});
+      applyState();saveDraft();msg('تم تحميل الطلب للتعديل');
+      window.scrollTo({top:0,behavior:'smooth'});
+      return;
+    }
+    if(delArm!==id){
+      delArm=id;b.textContent='تأكيد الحذف';clearTimeout(delTimer);
+      delTimer=setTimeout(function(){delArm=null;renderOrders()},3500);return;
+    }
+    delArm=null;clearTimeout(delTimer);
+    try{
+      if(db){await db.collection('orders').doc(id).delete()}
+      else{orders=orders.filter(function(x){return x.id!==id});writeLocalOrders()}
+      if(st.id===id){st.id=null;st.no=null;st.createdAt=null;saveDraft()}
+      renderOrders();msg('تم حذف الطلب');
+    }catch(err){msg('تعذّر حذف الطلب',true)}
+  });
+
+  // ---------- summary copy ----------
+  function summaryText(){
+    var t=calc(),L=[];
+    L.push('طلب'+(st.no?' رقم '+st.no:'')+' — '+showDate(st.date));
+    if(st.supplier.trim())L.push('الشركة: '+st.supplier.trim());
+    GROUPS.forEach(function(g){
+      var its=ITEMS.filter(function(i){return i.g===g.k&&(st.qty[i.id]||0)>0});
+      if(!its.length)return;
+      L.push('','*'+g.t+'*');
+      its.forEach(function(i){L.push('- '+i.name+': '+st.qty[i.id]+' كرتون')});
+    });
+    L.push('','إجمالي الكراتين: '+t.cartons,'قيمة البضاعة: '+fmt(t.goods),'النقل: '+fmt(t.transport));
+    if(t.rent)L.push('الإيجار: '+fmt(t.rent));
+    L.push('المجموع: '+fmt(t.total));
+    if(st.note.trim())L.push('','ملاحظات: '+st.note.trim());
+    return L.join('\n');
+  }
+  $('#copy').addEventListener('click',async function(){
+    var t=calc();if(!t.cartons){msg('أدخل كمية صنف واحد على الأقل',true);return}
+    var text=summaryText(),ta=$('#sumtxt');
+    try{await navigator.clipboard.writeText(text);ta.hidden=true;msg('تم نسخ الطلب')}
+    catch(e){ta.hidden=false;ta.value=text;ta.focus();ta.select();msg('حدّد النص وانسخه يدوياً')}
+  });
+
+  $('#clear').addEventListener('click',function(){
+    st.id=null;st.no=null;st.createdAt=null;st.date=todayStr();st.supplier='';st.note='';st.qty={};
+    $('#sumtxt').hidden=true;
+    applyState();saveDraft();msg('طلب جديد');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+  $('#save').addEventListener('click',askSave);
+  $('#cok').addEventListener('click',function(){closeConfirm();saveOrder()});
+  $('#cno').addEventListener('click',closeConfirm);
+  $('#confirm').addEventListener('click',function(e){if(e.target===this)closeConfirm()});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('#confirm').hidden)closeConfirm()});
+
+  // confirmation before saving: prices, fees (transport) and rent
+  var lastFocus=null;
+  function feeMode(){
+    function same(p){return Object.keys(p).every(function(k){return (st.fees[k]||0)===p[k]})}
+    if(same(presetFees(1)))return 'أجور إيجار يريم';
+    if(same(presetFees(2)))return 'أجور دمت';
+    return 'أجور معدّلة يدوياً';
+  }
+  function askSave(){
+    var t=calc();
+    if(!t.cartons){msg('أدخل كمية صنف واحد على الأقل',true);return}
+    var by={},list=[];
+    ITEMS.forEach(function(it){
+      var q=st.qty[it.id]||0;if(!q)return;
+      if(!by[it.pk]){by[it.pk]={pk:it.pk,g:it.g,c:0};list.push(by[it.pk])}
+      by[it.pk].c+=q;
+    });
+    var warns=[],rows='';
+    list.forEach(function(r){
+      var price=cfg.price[r.pk],fee=st.fees[r.g]||0,rent=cfg.rent[r.pk];
+      if(!(price>0))warns.push('سعر '+PKNAME[r.pk]+' صفر');
+      if(!(fee>0))warns.push('أجرة نقل '+PKNAME[r.pk]+' صفر');
+      rows+='<tr><td>'+PKNAME[r.pk]+'</td><td class="n">'+r.c+'</td><td class="n">'+fmt(price)+'</td><td class="n">'+fmt(fee)+'</td><td class="n">'+fmt(rent)+'</td></tr>';
+    });
+    $('#crows').innerHTML=rows;
+    $('#cfoot').innerHTML=
+      '<tr><td colspan="4">قيمة البضاعة</td><td class="n">'+fmt(t.goods)+'</td></tr>'+
+      '<tr><td colspan="4">النقل</td><td class="n">'+fmt(t.transport)+'</td></tr>'+
+      '<tr><td colspan="4">الإيجار</td><td class="n">'+fmt(t.rent)+'</td></tr>'+
+      '<tr><td colspan="4">المجموع الكلي</td><td class="n pos">'+fmt(t.total)+'</td></tr>';
+    $('#cwarn').innerHTML=warns.length?'<div class="warn">'+warns.map(function(w){return '<div>تنبيه: '+w+'</div>'}).join('')+'</div>':'';
+    $('#cmode').textContent=feeMode()+' · '+(st.id?'تعديل طلب رقم '+st.no:'طلب جديد');
+    lastFocus=document.activeElement;
+    $('#confirm').hidden=false;$('#cok').focus();
+  }
+  function closeConfirm(){
+    $('#confirm').hidden=true;
+    if(lastFocus&&lastFocus.focus)lastFocus.focus();
+  }
+
+  // last saved order note under the share buttons
+  function renderLast(){
+    var el=$('#lastnote');
+    if(!orders.length){el.textContent='لا يوجد طلب محفوظ سابق.';return}
+    var o=orders.reduce(function(a,b){return (b.createdAt||0)>(a.createdAt||0)?b:a});
+    var when='';
+    if(o.date){
+      var p=o.date.split('-'),d0=new Date(Number(p[0]),Number(p[1])-1,Number(p[2])),n=new Date();
+      var days=Math.round((new Date(n.getFullYear(),n.getMonth(),n.getDate())-d0)/86400000);
+      when=days===0?'اليوم':days===1?'أمس':days>1?'قبل '+days+' يوم':'';
+    }
+    el.innerHTML='آخر طلب: <b>رقم '+(o.no||'')+'</b> · '+showDate(o.date)+(when?' ('+when+')':'')+' · الإجمالي <b>'+fmt((o.totals&&o.totals.total)||0)+'</b>';
+  }
+
+  // ---------- order sheet drawing (PDF / image) ----------
+  var FONT='"IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif';
+  var SC={ink:'#12211D',muted:'#5A6B66',line:'#D2DCD8',head:'#EEF2F0',accent:'#B85F00',white:'#FFFFFF'};
+  function tx(c,s,x,y,al,w,sz,col){
+    c.font=w+' '+sz+'px '+FONT;c.fillStyle=col||SC.ink;c.textAlign=al;c.textBaseline='middle';
+    c.direction='rtl';c.fillText(String(s),x,y);
+  }
+  function wrapText(c,text,maxW,font){
+    c.font=font;var out=[];
+    String(text).split('\n').forEach(function(par){
+      var cur='';
+      par.split(/\s+/).forEach(function(w){
+        var tr=cur?cur+' '+w:w;
+        if(c.measureText(tr).width>maxW&&cur){out.push(cur);cur=w}else cur=tr;
+      });
+      out.push(cur);
+    });
+    return out;
+  }
+  function buildLines(W){
+    var t=calc(),L=40,R=W-40,lines=[];
+    var m=document.createElement('canvas').getContext('2d');
+    function add(h,d){lines.push({h:h,d:d})}
+    function fillRow(c,y,h,col){c.fillStyle=col;c.fillRect(L,y,R-L,h)}
+    function rule(c,y,col,h){c.fillStyle=col||SC.line;c.fillRect(L,y,R-L,h||1)}
+
+    add(84,function(c,y){
+      tx(c,'طلب شركة'+(st.no?' رقم '+st.no:''),R,y+24,'right','700',28);
+      tx(c,'التاريخ: '+showDate(st.date),R,y+58,'right','400',14,SC.muted);
+      if(st.supplier.trim())tx(c,'الشركة: '+st.supplier.trim(),L,y+58,'left','600',15);
+      rule(c,y+76,SC.accent,2);
+    });
+    add(12,function(){});
+
+    var X={qty:430,price:320,amt:190};
+    add(32,function(c,y){
+      fillRow(c,y,32,SC.head);
+      tx(c,'الصنف',R-10,y+16,'right','600',13,SC.muted);
+      tx(c,'الكمية',X.qty,y+16,'center','600',13,SC.muted);
+      tx(c,'سعر الكرتون',X.price,y+16,'center','600',13,SC.muted);
+      tx(c,'المبلغ',X.amt,y+16,'center','600',13,SC.muted);
+    });
+    GROUPS.forEach(function(g){
+      var its=ITEMS.filter(function(i){return i.g===g.k&&(st.qty[i.id]||0)>0});
+      if(!its.length)return;
+      add(32,function(c,y){tx(c,g.t,R-10,y+18,'right','700',16,SC.accent)});
+      its.forEach(function(i){
+        add(28,function(c,y){
+          tx(c,i.name,R-10,y+14,'right','400',14);
+          tx(c,st.qty[i.id],X.qty,y+14,'center','600',14);
+          tx(c,fmt(cfg.price[i.pk]),X.price,y+14,'center','400',14,SC.muted);
+          tx(c,fmt(t.lines[i.id]),X.amt,y+14,'center','600',14);
+          rule(c,y+27,SC.line);
+        });
+      });
+      var d=t.groups[g.k];
+      add(30,function(c,y){
+        fillRow(c,y,30,SC.head);
+        tx(c,'إجمالي '+g.t,R-10,y+15,'right','700',13);
+        tx(c,d.c,X.qty,y+15,'center','700',13);
+        tx(c,fmt(d.goods),X.amt,y+15,'center','700',13);
+      });
+      add(10,function(){});
+    });
+
+    add(20,function(){});
+    add(34,function(c,y){tx(c,'ملخص الطلب',R-10,y+17,'right','700',18)});
+    var Y={cart:545,goods:450,fee:355,tr:260,rn:170};
+    add(32,function(c,y){
+      fillRow(c,y,32,SC.head);
+      tx(c,'المجموعة',R-10,y+16,'right','600',13,SC.muted);
+      tx(c,'كراتين',Y.cart,y+16,'center','600',13,SC.muted);
+      tx(c,'المبلغ',Y.goods,y+16,'center','600',13,SC.muted);
+      tx(c,'أجرة الكرتون',Y.fee,y+16,'center','600',13,SC.muted);
+      tx(c,'النقل',Y.tr,y+16,'center','600',13,SC.muted);
+      tx(c,'الإيجار',Y.rn,y+16,'center','600',13,SC.muted);
+    });
+    GROUPS.forEach(function(g){
+      var d=t.groups[g.k];if(!d.c)return;
+      add(28,function(c,y){
+        tx(c,g.t,R-10,y+14,'right','500',14);
+        tx(c,d.c,Y.cart,y+14,'center','400',14);
+        tx(c,fmt(d.goods),Y.goods,y+14,'center','400',14);
+        tx(c,fmt(st.fees[g.k]||0),Y.fee,y+14,'center','400',14);
+        tx(c,fmt(d.tr),Y.tr,y+14,'center','400',14);
+        tx(c,fmt(d.rn),Y.rn,y+14,'center','400',14);
+        rule(c,y+27,SC.line);
+      });
+    });
+    add(32,function(c,y){
+      tx(c,'الإجمالي',R-10,y+16,'right','700',14);
+      tx(c,t.cartons,Y.cart,y+16,'center','700',14);
+      tx(c,fmt(t.goods),Y.goods,y+16,'center','700',14);
+      tx(c,fmt(t.transport),Y.tr,y+16,'center','700',14);
+      tx(c,fmt(t.rent),Y.rn,y+16,'center','700',14);
+    });
+    add(10,function(){});
+    add(50,function(c,y){
+      fillRow(c,y,50,SC.accent);
+      tx(c,'المجموع الكلي (بضاعة + نقل + إيجار)',R-14,y+25,'right','600',15,SC.white);
+      tx(c,fmt(t.total),L+16,y+25,'left','700',22,SC.white);
+    });
+    if(st.note.trim()){
+      add(24,function(){});
+      add(26,function(c,y){tx(c,'ملاحظات',R-10,y+13,'right','700',14)});
+      wrapText(m,st.note.trim(),R-L-20,'400 14px '+FONT).forEach(function(ln){
+        add(22,function(c,y){tx(c,ln,R-10,y+11,'right','400',14,SC.ink)});
+      });
+    }
+    add(36,function(){});
+    return lines;
+  }
+
+  // company copy: item names and quantities only, no prices, fees or notes
+  function buildCompanyLines(W){
+    var t=calc(),L=40,R=W-40,lines=[];
+    function add(h,d){lines.push({h:h,d:d})}
+    function fillRow(c,y,h,col){c.fillStyle=col;c.fillRect(L,y,R-L,h)}
+    function rule(c,y,col,h){c.fillStyle=col||SC.line;c.fillRect(L,y,R-L,h||1)}
+    var QX=L+95;
+    add(84,function(c,y){
+      tx(c,'طلب'+(st.no?' رقم '+st.no:''),R,y+24,'right','700',28);
+      tx(c,'التاريخ: '+showDate(st.date),R,y+58,'right','400',14,SC.muted);
+      if(st.supplier.trim())tx(c,'إلى: '+st.supplier.trim(),L,y+58,'left','600',16);
+      rule(c,y+76,SC.accent,2);
+    });
+    add(12,function(){});
+    add(34,function(c,y){
+      fillRow(c,y,34,SC.head);
+      tx(c,'الصنف',R-10,y+17,'right','600',14,SC.muted);
+      tx(c,'الكمية (كرتون)',QX,y+17,'center','600',14,SC.muted);
+    });
+    GROUPS.forEach(function(g){
+      var its=ITEMS.filter(function(i){return i.g===g.k&&(st.qty[i.id]||0)>0});
+      if(!its.length)return;
+      add(34,function(c,y){tx(c,g.t,R-10,y+20,'right','700',17,SC.accent)});
+      its.forEach(function(i){
+        add(32,function(c,y){
+          tx(c,i.name,R-10,y+16,'right','500',16);
+          tx(c,st.qty[i.id],QX,y+16,'center','700',17);
+          rule(c,y+31,SC.line);
+        });
+      });
+      add(10,function(){});
+    });
+    add(10,function(){});
+    add(44,function(c,y){
+      fillRow(c,y,44,SC.accent);
+      tx(c,'إجمالي الكراتين',R-14,y+22,'right','600',16,SC.white);
+      tx(c,t.cartons,QX,y+22,'center','700',20,SC.white);
+    });
+    add(36,function(){});
+    return lines;
+  }
+
+  async function renderSheet(mode,company){
+    try{
+      await document.fonts.load('400 14px "IBM Plex Sans Arabic"','طلب الكمية 0123');
+      await document.fonts.load('700 14px "IBM Plex Sans Arabic"','طلب الكمية 0123');
+    }catch(e){}
+    var W=794,PH=1123,S=2,M=40,lines=company?buildCompanyLines(W):buildLines(W),pages=[],H;
+    if(mode==='image'){
+      H=M*2;lines.forEach(function(l){H+=l.h});pages.push(lines);
+    }else{
+      H=PH;var cur=[],used=0;
+      lines.forEach(function(l){
+        if(used+l.h>PH-M*2&&cur.length){pages.push(cur);cur=[];used=0}
+        cur.push(l);used+=l.h;
+      });
+      if(cur.length)pages.push(cur);
+    }
+    return pages.map(function(pl){
+      var cv=document.createElement('canvas');cv.width=W*S;cv.height=H*S;
+      var c=cv.getContext('2d');c.scale(S,S);
+      c.fillStyle='#FFFFFF';c.fillRect(0,0,W,H);
+      var y=M;pl.forEach(function(l){l.d(c,y);y+=l.h});
+      return cv;
+    });
+  }
+  function blobOf(cv,type,q){
+    return new Promise(function(res,rej){cv.toBlob(function(b){b?res(b):rej(new Error('blob'))},type,q)});
+  }
+  async function makePdf(cvs){
+    var enc=new TextEncoder(),parts=[],offs=[],len=0,n=cvs.length;
+    function push(b){parts.push(b);len+=b.length}
+    function s(str){push(enc.encode(str))}
+    function obj(num){offs[num]=len;s(num+' 0 obj\n')}
+    s('%PDF-1.4\n');
+    obj(1);s('<< /Type /Catalog /Pages 2 0 R >>\nendobj\n');
+    var kids=[];for(var i=0;i<n;i++)kids.push((5+i*3)+' 0 R');
+    obj(2);s('<< /Type /Pages /Kids ['+kids.join(' ')+'] /Count '+n+' >>\nendobj\n');
+    for(var p=0;p<n;p++){
+      var cv=cvs[p],jpg=new Uint8Array(await (await blobOf(cv,'image/jpeg',0.92)).arrayBuffer());
+      var im=3+p*3,ct=4+p*3,pg=5+p*3,content='q 595 0 0 842 0 0 cm /Im0 Do Q';
+      obj(im);s('<< /Type /XObject /Subtype /Image /Width '+cv.width+' /Height '+cv.height+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+jpg.length+' >>\nstream\n');
+      push(jpg);s('\nendstream\nendobj\n');
+      obj(ct);s('<< /Length '+content.length+' >>\nstream\n'+content+'\nendstream\nendobj\n');
+      obj(pg);s('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /XObject << /Im0 '+im+' 0 R >> >> /Contents '+ct+' 0 R >>\nendobj\n');
+    }
+    var xr=len,total=3*n+3;
+    s('xref\n0 '+total+'\n0000000000 65535 f \n');
+    for(var k=1;k<total;k++)s(String(offs[k]).padStart(10,'0')+' 00000 n \n');
+    s('trailer\n<< /Size '+total+' /Root 1 0 R >>\nstartxref\n'+xr+'\n%%EOF');
+    return new Blob(parts,{type:'application/pdf'});
+  }
+  // fallback when the viewer cannot save files: show the sheet as images to long-press and save
+  function showPreview(cvs,title){
+    var box=$('#preview');box.innerHTML='';
+    var h=document.createElement('div');h.className='phead';
+    var sp=document.createElement('span');sp.textContent=title+': اضغط مطولاً على الصورة للحفظ أو المشاركة';
+    var cl=document.createElement('button');cl.type='button';cl.className='btn mini';cl.textContent='إغلاق';
+    cl.addEventListener('click',function(){box.hidden=true;box.innerHTML=''});
+    h.appendChild(sp);h.appendChild(cl);box.appendChild(h);
+    cvs.forEach(function(cv){
+      var im=new Image();im.alt=title;im.src=cv.toDataURL('image/jpeg',0.92);box.appendChild(im);
+    });
+    box.hidden=false;
+    try{box.scrollIntoView({behavior:'smooth',block:'nearest'})}catch(e){}
+  }
+  async function shareSheet(kind){
+    var t=calc();
+    if(!t.cartons){msg('أدخل كمية صنف واحد على الأقل',true);return}
+    var btns=[$('#sharepdf'),$('#shareimg'),$('#sharecompany')];
+    btns.forEach(function(b){b.disabled=true});msg('جاري تجهيز الملف…');
+    var cvs=null,company=kind==='company',asPdf=kind!=='image';
+    var title=company?'نسخة الشركة':(asPdf?'ملف الطلب':'صورة الطلب');
+    try{
+      var name=(company?'company-order-':'order-')+(st.no||'new')+'-'+st.date;
+      cvs=await renderSheet(asPdf?'pdf':'image',company);
+      if(!downloads){
+        showPreview(cvs,title);msg('الحفظ المباشر غير متاح هنا، تم عرض الصورة');
+      }else{
+        var blob=asPdf?await makePdf(cvs):await blobOf(cvs[0],'image/png');
+        await downloads.save({filename:name+(asPdf?'.pdf':'.png'),data:blob});
+        msg('تم تجهيز الملف');
+      }
+    }catch(e){
+      if(e&&e.code==='declined')msg('تم الإلغاء');
+      else if(cvs){showPreview(cvs,title);msg('تعذّر الحفظ المباشر، احفظ من الصورة المعروضة',true)}
+      else msg('تعذّر إنشاء الملف',true);
+    }
+    btns.forEach(function(b){b.disabled=false});
+  }
+  $('#sharepdf').addEventListener('click',function(){shareSheet('pdf')});
+  $('#shareimg').addEventListener('click',function(){shareSheet('image')});
+  $('#sharecompany').addEventListener('click',function(){shareSheet('company')});
+
+  // ---------- standalone: file sharing (share sheet, else download) ----------
+  function shimDownloads(){
+    return {save:async function(o){
+      var blob=o.data instanceof Blob?o.data:new Blob([o.data]);
+      var ext=(o.filename.split('.').pop()||'').toLowerCase();
+      var types={pdf:'application/pdf',png:'image/png',json:'application/json'};
+      var file=new File([blob],o.filename,{type:types[ext]||blob.type||'application/octet-stream'});
+      try{
+        if(navigator.canShare&&navigator.canShare({files:[file]})){
+          await navigator.share({files:[file],title:o.filename});
+          return {status:'saved'};
+        }
+      }catch(e){
+        if(e&&e.name==='AbortError')throw {code:'declined'};
+      }
+      var url=URL.createObjectURL(file),a=document.createElement('a');
+      a.href=url;a.download=o.filename;document.body.appendChild(a);a.click();a.remove();
+      setTimeout(function(){URL.revokeObjectURL(url)},4000);
+      return {status:'saved'};
+    }};
+  }
+
+  // ---------- standalone: backup / restore ----------
+  $('#bkexport').addEventListener('click',async function(){
+    var data={v:1,exportedAt:Date.now(),cfg:cfg,orders:orders};
+    try{
+      await downloads.save({filename:'orders-backup-'+todayStr()+'.json',data:new Blob([JSON.stringify(data)],{type:'application/json'})});
+      msg('تم تجهيز النسخة الاحتياطية');
+    }catch(e){msg(e&&e.code==='declined'?'تم الإلغاء':'تعذّر التصدير',true)}
+  });
+  $('#bkimportbtn').addEventListener('click',function(){$('#bkimport').click()});
+  $('#bkimport').addEventListener('change',function(){
+    var inp=this,f=inp.files&&inp.files[0];if(!f)return;
+    var r=new FileReader();
+    r.onload=function(){
+      try{
+        var d=JSON.parse(r.result);
+        if(!d||!Array.isArray(d.orders))throw new Error('bad');
+        var map={};
+        orders.forEach(function(o){map[o.id]=o});
+        d.orders.forEach(function(o){if(o&&o.id)map[o.id]=o});
+        orders=Object.keys(map).map(function(k){return map[k]}).sort(function(a,b){return (b.createdAt||0)-(a.createdAt||0)});
+        writeLocalOrders();
+        if(d.cfg){mergeCfg(d.cfg);scheduleCfgSave()}
+        syncCfgInputs();update();renderOrders();
+        msg('تم استيراد '+d.orders.length+' طلب');
+      }catch(e){msg('ملف غير صالح',true)}
+      inp.value='';
+    };
+    r.readAsText(f);
+  });
+
+  // ---------- boot ----------
+  loadDraft();
+  try{mergeCfg(JSON.parse(localStorage.getItem('orderCfg1')||'null'))}catch(e){}
+  orders=readLocalOrders();
+  syncCfgInputs();applyState();
+
+  function waitForClaude(){
+    return new Promise(function(res){
+      var n=0;
+      (function chk(){
+        if((window.claude&&window.claude.use)||n++>50)res();else setTimeout(chk,100);
+      })();
+    });
+  }
+  async function connect(){
+    if(!window.claude||!window.claude.use){
+      downloads=shimDownloads();
+      $('#sharepdf').hidden=false;$('#shareimg').hidden=false;$('#sharecompany').hidden=false;
+      return;
+    }
+    try{downloads=await window.claude.use('downloads')}catch(e){downloads=null}
+    try{db=await window.claude.use('db')}catch(e){db=null}
+    if(!db)return;
+    orders=[];renderOrders();
+    db.doc('config/main').onSnapshot(function(s){
+      if(s.exists){mergeCfg(s.data());syncCfgInputs();update()}
+    },function(){});
+    db.collection('orders').orderBy('createdAt','desc').limit(200).onSnapshot(function(snap){
+      orders=snap.docs.map(function(d){return Object.assign({id:d.id},d.data())});
+      renderOrders();
+    },function(){msg('تعذّر تحميل الطلبات المحفوظة',true)});
+  }
+  connect();
+})();
+</script>
+
+<script>
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}
+</script>
+</body>
+</html>
